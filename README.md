@@ -11,8 +11,7 @@ A Jira-style TODO app: FastAPI backend, React + Tailwind + shadcn/ui frontend, P
 ## Run with Docker Compose
 
 ```bash
-cp backend/.env.example backend/.env
-docker compose --env-file backend/.env up --build
+docker compose up
 ```
 
 - Frontend: http://localhost:5174
