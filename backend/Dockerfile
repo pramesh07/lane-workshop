@@ -8,14 +8,24 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_PROJECT_ENVIRONMENT=/usr/local
 
+ARG BUILD_ENV=production
+# uv bundles its own root store and ignores the system CAs unless told otherwise.
+ENV UV_NATIVE_TLS=1
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq-dev gcc \
+    libpq-dev gcc ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-COPY pyproject.toml uv.lock ./
+COPY certs/cloudflare-ca.crt /tmp/cloudflare-ca.crt
+RUN if [ "$BUILD_ENV" = "development" ]; then \
+      cp /tmp/cloudflare-ca.crt /usr/local/share/ca-certificates/cloudflare-ca.crt \
+      && update-ca-certificates; \
+    fi
+
+COPY backend/pyproject.toml backend/uv.lock ./
 RUN uv sync --locked --no-install-project
 
-COPY . .
+COPY backend/. .
 
 EXPOSE 8000
 
