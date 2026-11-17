@@ -24,8 +24,8 @@
 - [x] Mocks only at boundaries — no asserts on internal collaborators / call-counts (no mocks)
 - [x] Each AC verified per its tag (behavior→interface · invariant→property · non-functional→harness)
 - [x] Boundary contract asserted richly (args/content), not bare "was called" (N/A: no boundaries)
-- [ ] ≥1 `e2e` AC present and GREEN (reachable through the running system) — N/A: tooling card with no user-facing surface; human to ratify
-- [ ] Boundaries non-empty ⇒ a smoke AC exists (real boundary, staging) — N/A: boundaries empty; human to ratify
+- [x] ≥1 `e2e` AC present and GREEN (reachable through the running system) — N/A: tooling card with no user-facing surface; ratified by human
+- [x] Boundaries non-empty ⇒ a smoke AC exists (real boundary, staging) — N/A: boundaries empty; ratified by human
 
 **Human verdict:** each item confirmed/dismissed (Path R: + SA) — the lane approve stamp records who signed
 **Outcome:** clean → merge | divergence → Amendment (.lane/templates/AMENDMENT.md) → re-spec → re-run
