@@ -10,3 +10,8 @@ dependencies = [
     "pydantic==2.10.4",
     "pydantic-settings==2.7.1",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]

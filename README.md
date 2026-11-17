@@ -44,6 +44,16 @@ cp .env.example .env
 npm run dev
 ```
 
+## Running tests
+
+```bash
+# Backend (pytest)
+cd backend && uv sync && uv run pytest
+
+# Frontend (vitest)
+cd frontend && npm ci && npm test
+```
+
 ## API
 
 | Method | Path                    | Description                    |
