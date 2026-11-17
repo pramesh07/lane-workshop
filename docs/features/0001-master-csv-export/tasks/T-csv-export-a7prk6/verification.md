@@ -1,3 +1,8 @@
+---
+approved_by: "Pramesh Karmacharya"
+approved_at: "2026-11-17"
+approved_sha256: "65ca25a7b0a5303b27121b0372cba7242812aa4bc8ed491e2b4edad3da2853fa"
+---
 ## Verification — Task T-csv-export-a7prk6 — 2026-11-17
 > Critic anchored to the frozen story snapshot (the external spec — `snapshot-TSD.md`), NOT to the code. ★GATE: owner confirms/dismisses every flag.
 
