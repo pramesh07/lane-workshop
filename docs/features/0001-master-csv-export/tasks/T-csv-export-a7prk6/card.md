@@ -1,11 +1,18 @@
-## Task T-csv-export-a7prk6 — <title>
-**Parent:** story S-0001.nn · feature 0001 (docs/features/0001-master-csv-export/ — its BRIEFING.md + PRD.md + TSD.md)
-**Slice:** a complete observable behavior end-to-end + tests (full vertical — a disconnected layer = smell)
-**Acceptance criteria:** (tag each `behavior`/`invariant`/`non-functional`/`e2e`; behavior ACs = observable outcome through an interface — NO "calls X / saves to table Y / uses lib Z")
-- [ ] AC-1 [behavior]: <observable outcome through interface>
-**End-to-end AC:** AC-<n> [e2e] — reachable through the running app (required: green component/unit ≠ reachable)
-**Tests:** AC-1  ← ordered; first = tracer bullet
-<!-- exception: Tests: N/A — reason: config | scaffolding | spike | tooling | integration.  Tests: refactor — <what stays green> for behaviour-preserving work (lane proves pass→pass) -->
-**Test scope:** tests/T-csv-export-a7prk6/   ← documentation: where this task's OWN tests live. Scope is NOT configured — red/green scope to the changed test files and `verify` derives it from the RED commits (ADR-0002); `review` runs the FULL suite. This line is a human pointer only.
+---
+approved_by: "Pramesh Karmacharya"
+approved_at: "2026-11-17"
+approved_sha256: "17c2c1ad85e2d41b0fb4c02eb3c53e4b8861123c6067b0bc7e8c859c14dbfb09"
+---
+## Task T-csv-export-a7prk6 — Test toolchain bootstrap
+**Parent:** story none (enabler for S-0001.01–.03) · feature 0001 (docs/features/0001-master-csv-export/ — its BRIEFING.md + PRD.md + TSD.md)
+**Slice:** commit a working test toolchain for both tiers so every later red-green card can claim and replay: pytest in `backend/`, vitest in `frontend/`, each with its config, a trivial passing test, and the needed ignores. (Scaffolding — no product behavior.)
+**Acceptance criteria:**
+- [ ] AC-1 [behavior]: running the backend test command from `backend/` exits 0 and reports at least one test executed.
+- [ ] AC-2 [behavior]: running the frontend test command from `frontend/` exits 0 and reports at least one test executed.
+- [ ] AC-3 [behavior]: both commands work from a fresh checkout after the documented install steps (`uv sync`, `npm ci`), with no manual setup.
+**End-to-end AC:** N/A — tooling card, no user-facing surface.
+**Tests:** N/A — reason: scaffolding (bootstrap). The trivial tests exist only to prove each runner executes. ⚠ Needs human ratification at the breakdown gate.
+**Notes:** `test_cmd` / `runner.*` in `.lane/lane.config` are policy keys and must land on `main` as their own commit (the copy on a task branch is inert). Suggested: `runner.api` (root `backend`, `pytest`, pattern `collected [1-9]`) and `runner.web` (root `frontend`, `npx vitest run`, pattern `Tests +[0-9]+ (passed|failed)`).
+**Test scope:** n/a
 <!-- approval: written by `lane approve` as frontmatter (approved_by/at/sha256) after a human confirms — never hand-edit -->
-**Done =** reviewable PR, all tests pass, links to chain. One PR per task (default).
+**Done =** reviewable PR, both runners pass on a fresh checkout, links to chain. One PR per task (default).
