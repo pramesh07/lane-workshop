@@ -1,0 +1,72 @@
+{
+  "kind": "qa",
+  "label": "QA track of an approved dev feature: test plan ★ → test cases ★ → per case: explore (STORYBOARD.md) → e2e → QA report ★",
+  "rung": null,
+  "skills": false,
+  "agent": "lane-qa-worker",
+  "source": { "roles": ["prd", "tsd"] },
+  "nouns": { "unit": "qa", "child": "case" },
+  "steps": [
+    {
+      "type": "artifact",
+      "id": "test-plan",
+      "file": "TEST-PLAN.md",
+      "template": "TEST-PLAN.md",
+      "phase": "SCOPE",
+      "role": "prd",
+      "approve": "human",
+      "grounded": false,
+      "assist": "assist_qa_test_plan",
+      "skill": "lane-qa-plan",
+      "scaffold": true,
+      "label": "Fill TEST-PLAN.md from the source PRD + TSD lane linked — answer 'already built?'",
+      "approveLabel": "Human gate (Gate 1) → QA runs lane approve — signs the test plan and its links to the source PRD and TSD"
+    },
+    {
+      "type": "artifact",
+      "id": "test-cases",
+      "file": "TEST-CASES.md",
+      "template": "TEST-CASES.md",
+      "phase": "SPEC",
+      "role": "tsd",
+      "approve": "human",
+      "grounded": false,
+      "assist": "assist_qa_test_cases",
+      "skill": "lane-qa-cases",
+      "reviewer": "lane-qa-case-reviewer",
+      "scaffold": true,
+      "label": "Fill TEST-CASES.md — one `## TSD S-NNNN.nn — TC-nn` section per test case",
+      "approveLabel": "Human gate (Gate 2) → QA runs lane approve — signs the test cases; lane then creates one task per case"
+    },
+    {
+      "type": "tasks",
+      "mode": "cards",
+      "cardGate": false,
+      "planGate": false,
+      "review": "human",
+      "tests": "card",
+      "from": "test-cases",
+      "waitFor": "source",
+      "paths": "acceptance",
+      "critic": "lane-qa-critic",
+      "report": "QA-VERIFICATION.md",
+      "stepSkills": {
+        "implement": "lane-qa-e2e",
+        "resolve-flags": "lane-receive-review",
+        "run-done": "lane-verify-claims"
+      },
+      "steps": [
+        {
+          "id": "storyboard",
+          "file": "STORYBOARD.md",
+          "template": "STORYBOARD.md",
+          "approve": "human",
+          "assist": "assist_qa_storyboard",
+          "skill": "lane-qa-explore",
+          "scaffold": true,
+          "label": "Explore the frozen case on the running app — fill STORYBOARD.md, a screenshot per step"
+        }
+      ]
+    }
+  ]
+}

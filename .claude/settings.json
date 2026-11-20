@@ -21,6 +21,17 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "lane pretool"
+          }
+        ]
+      }
     ]
   }
 }

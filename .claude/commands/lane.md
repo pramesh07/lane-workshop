@@ -54,7 +54,7 @@ and reply `continue` — then stop. (If `lane.config` sets `auto_land: true`, ru
 **Autonomy mode.**
 Default is attended: when you are genuinely blocked or need a human decision, ask and stop —
 the human is present. If `lane.config` sets `autonomy_mode: unattended`, never stop to ask:
-pick the recommended option, note why, and proceed.
+pick the recommended option, note why, and proceed — except after a dev worker's `RETURN: plan` (below).
 
 **If a `lane` hint names an assist, run it before drafting/approving.**
 When the "Next:" output shows an `assist:` line, the operator has configured a project-tuned
@@ -62,6 +62,47 @@ prompt for this authoring step. Apply it before you finish
 the artifact — it may tell you to invoke a skill or spawn a subagent. It is advisory, not a gate:
 a `⚠ … not found` assist line is a skip, not a blocker, and the human approval stamp is still the
 only thing that closes the gate. Never treat running an assist as approval.
+
+**If a `lane` hint shows a `Method:` line, it names the skill for this step.**
+When the "Next:" output shows `Method: load the <skill> skill before you start this step`, that
+`lane-*` skill carries LANE's generic method for the step. If it isn't already in your context,
+load it before you start the step — once, not on every `Next:` (a write-test/write-impl loop
+keeps the same skill). lane cannot check that you did; the human gate does. It is not a gate, and
+running it is never approval. If an assist is also shown, the assist is the project's tuning and
+wins on conflict. A kind that sets `"skills": false` never shows a `Method:` line: it has its own
+method, so do not load a `lane-*` skill on your own there. (On other kinds a Stop-hook continue
+without the line only means the skill has not changed.)
+
+**If a `lane` hint shows a `Review:` line, it names the reviewers for the draft.**
+At the draft steps (TSD, spec, plan), when the reviewer agents are installed, the "Next:" output
+shows `Review: when the draft is done, spawn the <agent> agent once, ...`. When the draft is done,
+spawn the named agent(s) once each, giving them only the file paths, and in your hand-off say what
+they flagged, what you changed and what you did not. It is advisory, not a gate: "no gaps found" is
+not approval, and running it is never approval.
+
+**If a `lane` hint shows a `Delegate:` line, read this before you hand anything over.**
+A `Delegate:` line is for Claude Code — in Cursor or Copilot, do the step yourself with its
+`Method:` skill. `Delegate: hand this step to the <agent> agent` names an installed helper agent for
+the step: give it the step (and the file paths) instead of doing the work yourself. When a step
+shows a `Delegate:` line, do not load that step's `Method:` skill yourself — the helper has it
+preloaded; hand the step over. After review comments, hand the QA step to the same agent again with
+the comments in the request (ADR-0042 §3). It is advisory: never stamp, approve or sign from it, and
+the agent's report is not approval.
+
+QA's worker takes one step per hand-off: it returns after each step. In Claude Code, the dev worker
+(`lane-dev-worker`) is one hand-off per task (ADR-0043): it loops on that task's write-test,
+write-impl and implement steps by itself. Hand it the task id and the absolute path of the task's worktree (lane's
+hint can leave the worktree unknown, so you give it), not one step. Resolving review flags on a dev
+task is the main session's job, not a second hand-off. The worker ends with one line,
+`RETURN: slip|hard|plan|done — <one sentence>`. Read that line and act by the ladder:
+- `slip` — mechanical misses ran its budget out: hand the task back to it once, with lane's
+  refusal, even when your own re-run clears the refusal: the worker does the rest of the task, not
+  you. A second `slip` on the same task counts as `hard`.
+- `hard` — finish the task yourself: load its `Method:` skill and ignore that task's `Delegate:`
+  line from then on. A missing or malformed `RETURN:` line counts as `hard`.
+- `plan` — the plan, card or TSD is wrong; stop and ask your human, even under `autonomy_mode: unattended`
+  (the fix is a signed document). End your turn with the worker's `RETURN: plan` line, verbatim, on a line of its own.
+- `done` — continue with lane's next step (the review, the gates). Run `lane` and follow it.
 
 **No code before every gate this kind has is passed — and `lane` is what names them.**
 For every task: `lane plan <T-ID>` scaffolds the plan. Whether it is SIGNED depends on the kind.
@@ -86,6 +127,8 @@ Never write implementation before the failing test is committed. Never skip a be
   yourself burns the tokens the declaration exists to save, and adds no external signal.
 - `subagent` — the ONE mode that asks for a Critic: spawn it with FRESH context, giving it ONLY
   the frozen snapshot and the diff, never your build reasoning. Then fill the report from its findings.
+  When `lane review` names the `lane-critic` agent, spawn that agent over the spec and the patch
+  file it names.
 - undeclared — **do not spawn a Critic on your own.** lane has not been told who reviews, so it
   asks for nobody: run `lane review`, follow the handoff it prints, and if the choice is yours to
   make, raise it with the human (declaring `critic_mode` once ends the ambiguity).
