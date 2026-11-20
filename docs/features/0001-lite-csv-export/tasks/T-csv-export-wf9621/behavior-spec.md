@@ -14,9 +14,9 @@
 - Then: 200, text/csv; charset=utf-8, attachment filename tasks.csv, exact header line, CRLF row endings, raw status values, decimal position, ISO 8601 timestamps with offset, empty cell for null description
 
 ## B-2: AC-2 [behavior]: With tasks in all four columns, rows come in board order (To Do, In Progress, In Review, Done), then ascending position within a column, one row per task. (INTENT "What changes" 2)
-- Given:
-- When:
-- Then:
+- Given: (plan B-2, the AC-6 formula-prefix behavior) titles/descriptions starting with =, +, -, @, TAB or CR, and a plain value
+- When: the value goes through the CSV helper, or GET /api/tasks/export is called
+- Then: prefixed values get a leading ', all other values and fields are written as stored
 
 ## B-3: AC-3 [behavior]: A title or description containing a comma, a double quote and a line break parses back to exactly one row of seven cells with the original text; non-ASCII text survives. (INTENT "What changes" 3)
 - Given:
