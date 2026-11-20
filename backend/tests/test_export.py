@@ -35,3 +35,15 @@ def test_export_returns_csv_with_header_and_rows(client, db):
     assert n[2] == ""
     assert n[3] == "done"
     assert n[4] == "1.0"
+
+
+def test_export_neutralizes_formula_prefixes(client, db):
+    db.add(Task(title="=1+1", description="@cmd", status=TaskStatus.TODO, position=1))
+    db.commit()
+
+    resp = client.get("/api/tasks/export")
+
+    rows = list(csv.reader(io.StringIO(resp.text, newline="")))
+    assert rows[1][1] == "'=1+1"
+    assert rows[1][2] == "'@cmd"
+    assert rows[1][3] == "todo"
