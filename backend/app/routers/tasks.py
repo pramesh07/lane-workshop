@@ -1,9 +1,11 @@
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from app import crud
+from app.csv_export import tasks_to_csv
 from app.database import get_db
 from app.schemas import TaskCreate, TaskMove, TaskOut, TaskUpdate
 
@@ -20,6 +22,16 @@ def _get_task_or_404(db: Session, task_id: uuid.UUID):
 @router.get("", response_model=list[TaskOut])
 def list_tasks(db: Session = Depends(get_db)):
     return crud.get_tasks(db)
+
+
+@router.get("/export")
+def export_tasks(db: Session = Depends(get_db)):
+    body = tasks_to_csv(crud.get_tasks(db))
+    return Response(
+        content=body,
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": 'attachment; filename="tasks.csv"'},
+    )
 
 
 @router.post("", response_model=TaskOut, status_code=201)

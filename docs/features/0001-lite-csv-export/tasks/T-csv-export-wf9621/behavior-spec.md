@@ -9,9 +9,9 @@
 > non-functional ACs are not RED→GREEN cycles — any are listed in their own section.
 
 ## B-1 (tracer bullet): AC-1 [behavior]: `GET /api/tasks/export` returns `200` with `Content-Type: text/csv; charset=utf-8` and `Content-Disposition: attachment; filename="tasks.csv"`; the first row is `id,title,description,status,position,created_at,updated_at`. (INTENT "What changes" 1)
-- Given:
-- When:
-- Then:
+- Given: tasks seeded in the test database, one with a null description
+- When: GET /api/tasks/export
+- Then: 200, text/csv; charset=utf-8, attachment filename tasks.csv, exact header line, CRLF row endings, raw status values, decimal position, ISO 8601 timestamps with offset, empty cell for null description
 
 ## B-2: AC-2 [behavior]: With tasks in all four columns, rows come in board order (To Do, In Progress, In Review, Done), then ascending position within a column, one row per task. (INTENT "What changes" 2)
 - Given:
