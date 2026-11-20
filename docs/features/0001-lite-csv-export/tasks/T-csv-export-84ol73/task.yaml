@@ -13,7 +13,7 @@ story: "S-0001.02"
 # accept this task. Record it at creation: lane new card --depends-on T-A,T-B (validated +
 # committed with the scaffold). A hand edit here is uncommitted until you commit it — invisible
 # to task branches forked from HEAD, to lane land, and to teammates.
-depends_on: []
+depends_on: [T-csv-export-wf9621]
 # tests_mode — set automatically by `lane start` from the card's Tests: line.
 #   red-green : full TDD cycle enforced; lane verify replays RED→GREEN ledger.
 #   na        : no TDD ledger; lane verify + lane review skip test checks.
